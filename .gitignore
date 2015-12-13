@@ -1,0 +1,33 @@
+.DS_Store
+
+# Files for the Dalvik VM
+*.mp4
+*.mp3
+*.3gpp
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+/*/build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+
+# Intellij project files
+*.iml
+*.ipr
+*.iws
+.idea/
+
+#SVN
+.svn/
+
