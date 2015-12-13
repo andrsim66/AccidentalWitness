@@ -23,9 +23,18 @@ public class Main {
         try {
             datagramSocket = new DatagramSocket(PORT);
             while (true) {
+                byte[] bytesSize = new byte[1];
+                DatagramPacket packet = new DatagramPacket(bytesSize, bytesSize.length);
+                datagramSocket.receive(packet);
+                byte[] bytes = new byte[intFromBytes(bytesSize)];
+                packet = new DatagramPacket(bytes, bytes.length);
+                datagramSocket.receive(packet);
+                bytes = packet.getData();
+                String filename = new String(bytes, "UTF-8");
+
                 ArrayList<byte[]> datagram;
                 byte[] size = new byte[1];
-                DatagramPacket packet = new DatagramPacket(size, size.length);
+                packet = new DatagramPacket(size, size.length);
                 datagramSocket.receive(packet);
                 int length = intFromBytes(size);
                 byte[] buffer = new byte[length];
@@ -41,7 +50,8 @@ public class Main {
                     datagram.add(packet.getData());
                 }
 
-                FileOutputStream output = new FileOutputStream(new File("target-file.mp4"));
+//                FileOutputStream output = new FileOutputStream(new File("target-file.mp4"));
+                FileOutputStream output = new FileOutputStream(new File(filename));
                 IOUtils.write(createFile(datagram), output);
 
                 System.out.println("received");
