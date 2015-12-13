@@ -3,9 +3,7 @@ package com.company;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -50,18 +48,64 @@ public class Main {
                     datagram.add(packet.getData());
                 }
 
+                String folder1 = "/home/voronsky/IdeaProjects/hackathon-frontent/video/";
 //                FileOutputStream output = new FileOutputStream(new File("target-file.mp4"));
-                FileOutputStream output = new FileOutputStream(new File(filename));
+                FileOutputStream output = new FileOutputStream(new File(folder1 + filename));
                 IOUtils.write(createFile(datagram), output);
 
-                System.out.println("received");
 
+                String folder = "/home/voronsky/IdeaProjects/hackathon-frontent/video/";
+                String json = "/home/voronsky/IdeaProjects/hackathon-frontent/src/js/main.json";
+                String start = "{\"videos\":[";
+                String end = "],\"link\":\"#\"}";
+                File vid = new File(folder);
+                File[] files = vid.listFiles();
+                String newJson = start;
+                for (int i = 0; i < files.length; i++) {
+                    newJson += "\"" + files[i].getName() + "\"";
+                    if (i < files.length - 1)
+                        newJson += ",";
+                }
+                newJson += end;
+                System.out.println(newJson);
+
+                PrintWriter out = new PrintWriter(json);
+                out.println(newJson);
+                out.flush();
+                out.close();
+                System.out.println("received");
             }
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String readJson(String path) {
+        BufferedReader br = null;
+
+        try {
+
+            String sCurrentLine;
+
+            br = new BufferedReader(new FileReader(path));
+            StringBuilder sb = new StringBuilder();
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                sb.append(sCurrentLine);
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null) br.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
     }
 
     private static byte[] createFile(List<byte[]> packets) {
